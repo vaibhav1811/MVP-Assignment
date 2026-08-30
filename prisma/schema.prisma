@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  buyer
+  seller
+  admin
+}
+
+enum OrderStatus {
+  pending
+  approved
+  rejected
+  completed
+}
+
+model User {
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  hashedPassword String
+  role           Role
+  createdAt      DateTime  @default(now())
+  listings       Listing[]
+  orders         Order[]
+
+  @@map("users")
+}
+
+model Listing {
+  id                String   @id @default(uuid())
+  sellerId          String
+  seller            User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  title             String
+  description       String
+  price             Decimal  @db.Decimal(10, 2)
+  quantityAvailable Int
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  orders            Order[]
+
+  @@map("listings")
+}
+
+model Order {
+  id         String      @id @default(uuid())
+  buyerId    String
+  buyer      User        @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  listingId  String
+  listing    Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  quantity   Int
+  totalPrice Decimal     @db.Decimal(10, 2)
+  status     OrderStatus @default(pending)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@map("orders")
+}

@@ -1,0 +1,206 @@
+{
+  "info": {
+    "name": "Marketplace MVP API Collection",
+    "_postman_id": "marketplace-mvp-api-collection",
+    "description": "Full-stack Next.js Marketplace MVP API with Role-Based Access Control, Atomic Stock Transactions, and State Machine Order Management.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register Buyer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Buyer\",\n  \"email\": \"buyer@marketplace.local\",\n  \"password\": \"BuyerPassword123!\",\n  \"role\": \"buyer\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] }
+          }
+        },
+        {
+          "name": "Register Seller",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apex Tech Merchant\",\n  \"email\": \"seller@marketplace.local\",\n  \"password\": \"SellerPassword123!\",\n  \"role\": \"seller\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] }
+          }
+        },
+        {
+          "name": "Login (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@marketplace.local\",\n  \"password\": \"AdminPassword123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Login (Seller)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"seller@marketplace.local\",\n  \"password\": \"SellerPassword123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Login (Buyer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"buyer@marketplace.local\",\n  \"password\": \"BuyerPassword123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/users/me", "host": ["{{baseUrl}}"], "path": ["api", "users", "me"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/auth/logout", "host": ["{{baseUrl}}"], "path": ["api", "auth", "logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Listings",
+      "item": [
+        {
+          "name": "Browse Active Listings (Public / Buyer)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/listings?isActive=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "listings"],
+              "query": [{ "key": "isActive", "value": "true" }]
+            }
+          }
+        },
+        {
+          "name": "Create Listing (Seller Only)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"4K Ultra Curved Monitor 34-inch\",\n  \"description\": \"High refresh rate gaming monitor with HDR400 and USB-C dock\",\n  \"price\": 499.99,\n  \"quantityAvailable\": 12,\n  \"isActive\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/listings", "host": ["{{baseUrl}}"], "path": ["api", "listings"] }
+          }
+        },
+        {
+          "name": "Get Listing Details",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/listings/{{listingId}}", "host": ["{{baseUrl}}"], "path": ["api", "listings", "{{listingId}}"] }
+          }
+        },
+        {
+          "name": "Update Listing (Owner Seller Only)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 479.99,\n  \"quantityAvailable\": 15\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/listings/{{listingId}}", "host": ["{{baseUrl}}"], "path": ["api", "listings", "{{listingId}}"] }
+          }
+        },
+        {
+          "name": "Soft Delete Listing (Owner Seller Only)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/listings/{{listingId}}", "host": ["{{baseUrl}}"], "path": ["api", "listings", "{{listingId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Orders & State Machine",
+      "item": [
+        {
+          "name": "Place Order (Buyer Only - Atomic Stock)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listingId\": \"{{listingId}}\",\n  \"quantity\": 2\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] }
+          }
+        },
+        {
+          "name": "Get My Orders (Buyer / Seller)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/orders/me", "host": ["{{baseUrl}}"], "path": ["api", "orders", "me"] }
+          }
+        },
+        {
+          "name": "List All Orders (Admin Only)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders?status=pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"],
+              "query": [{ "key": "status", "value": "pending" }]
+            }
+          }
+        },
+        {
+          "name": "Approve Order (Admin Only: pending -> approved)",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/approve", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{orderId}}", "approve"] }
+          }
+        },
+        {
+          "name": "Reject Order (Admin Only: pending -> rejected + Stock Refund)",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/reject", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{orderId}}", "reject"] }
+          }
+        },
+        {
+          "name": "Complete Order (Admin / Seller: approved -> completed)",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/complete", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{orderId}}", "complete"] }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "listingId", "value": "REPLACE_WITH_LISTING_ID" },
+    { "key": "orderId", "value": "REPLACE_WITH_ORDER_ID" }
+  ]
+}
