@@ -17,5 +17,6 @@ async function handleGetMyOrders(req) {
 }
 
 const GET = wrapHandler(handleGetMyOrders);
+const dynamic = 'force-dynamic';
 
-module.exports = { GET };
+module.exports = { GET, dynamic };

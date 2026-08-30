@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 import { useToast } from '@/components/ToastContext';
 import { Lock, Mail, ArrowRight, ShieldCheck, Store, ShoppingBag, Loader2 } from 'lucide-react';
 
-export default function LoginPage() {
+function LoginForm() {
   const { login } = useAuth();
   const { success, error } = useToast();
   const router = useRouter();
@@ -52,98 +52,106 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-page-container">
-      <div className="auth-card glass-card">
-        <div className="auth-header">
-          <h1 className="auth-title">Welcome Back</h1>
-          <p className="auth-subtitle">Sign in to your multi-role marketplace account</p>
-        </div>
+    <div className="auth-card glass-card">
+      <div className="auth-header">
+        <h1 className="auth-title">Welcome Back</h1>
+        <p className="auth-subtitle">Sign in to your multi-role marketplace account</p>
+      </div>
 
-        {/* Quick Demo Fill Buttons */}
-        <div className="quick-demo-section">
-          <span className="quick-demo-label">1-Click Demo Credentials:</span>
-          <div className="quick-demo-buttons">
-            <button
-              type="button"
-              className="quick-btn btn-quick-admin"
-              onClick={() => handleQuickLogin('admin@marketplace.local', 'AdminPassword123!')}
-            >
-              <ShieldCheck size={14} /> Admin
-            </button>
-            <button
-              type="button"
-              className="quick-btn btn-quick-seller"
-              onClick={() => handleQuickLogin('seller@marketplace.local', 'SellerPassword123!')}
-            >
-              <Store size={14} /> Seller
-            </button>
-            <button
-              type="button"
-              className="quick-btn btn-quick-buyer"
-              onClick={() => handleQuickLogin('buyer@marketplace.local', 'BuyerPassword123!')}
-            >
-              <ShoppingBag size={14} /> Buyer
-            </button>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label className="form-label" htmlFor="email">
-              Email Address
-            </label>
-            <div className="input-with-icon">
-              <Mail size={18} className="input-icon" />
-              <input
-                id="email"
-                type="email"
-                required
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="form-input"
-              />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label" htmlFor="password">
-              Password
-            </label>
-            <div className="input-with-icon">
-              <Lock size={18} className="input-icon" />
-              <input
-                id="password"
-                type="password"
-                required
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="form-input"
-              />
-            </div>
-          </div>
-
-          <button type="submit" disabled={loading} className="btn-primary auth-submit-btn">
-            {loading ? (
-              <>
-                <Loader2 size={18} className="animate-spin" /> Signing In...
-              </>
-            ) : (
-              <>
-                Sign In <ArrowRight size={18} />
-              </>
-            )}
+      {/* Quick Demo Fill Buttons */}
+      <div className="quick-demo-section">
+        <span className="quick-demo-label">1-Click Demo Credentials:</span>
+        <div className="quick-demo-buttons">
+          <button
+            type="button"
+            className="quick-btn btn-quick-admin"
+            onClick={() => handleQuickLogin('admin@marketplace.local', 'AdminPassword123!')}
+          >
+            <ShieldCheck size={14} /> Admin
           </button>
-        </form>
-
-        <div className="auth-footer">
-          <span>Don&apos;t have an account yet?</span>
-          <Link href="/register" className="auth-link">
-            Create Account
-          </Link>
+          <button
+            type="button"
+            className="quick-btn btn-quick-seller"
+            onClick={() => handleQuickLogin('seller@marketplace.local', 'SellerPassword123!')}
+          >
+            <Store size={14} /> Seller
+          </button>
+          <button
+            type="button"
+            className="quick-btn btn-quick-buyer"
+            onClick={() => handleQuickLogin('buyer@marketplace.local', 'BuyerPassword123!')}
+          >
+            <ShoppingBag size={14} /> Buyer
+          </button>
         </div>
       </div>
+
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="form-group">
+          <label className="form-label" htmlFor="email">
+            Email Address
+          </label>
+          <div className="input-with-icon">
+            <Mail size={18} className="input-icon" />
+            <input
+              id="email"
+              type="email"
+              required
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="form-input"
+            />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label" htmlFor="password">
+            Password
+          </label>
+          <div className="input-with-icon">
+            <Lock size={18} className="input-icon" />
+            <input
+              id="password"
+              type="password"
+              required
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="form-input"
+            />
+          </div>
+        </div>
+
+        <button type="submit" disabled={loading} className="btn-primary auth-submit-btn">
+          {loading ? (
+            <>
+              <Loader2 size={18} className="animate-spin" /> Signing In...
+            </>
+          ) : (
+            <>
+              Sign In <ArrowRight size={18} />
+            </>
+          )}
+        </button>
+      </form>
+
+      <div className="auth-footer">
+        <span>Don&apos;t have an account yet?</span>
+        <Link href="/register" className="auth-link">
+          Create Account
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <div className="auth-page-container">
+      <Suspense fallback={<div className="auth-card glass-card" style={{ padding: '2rem', textAlign: 'center' }}>Loading login...</div>}>
+        <LoginForm />
+      </Suspense>
 
       <style jsx>{`
         .auth-page-container {

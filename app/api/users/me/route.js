@@ -8,5 +8,6 @@ async function handleGetMe(req) {
 }
 
 const GET = wrapHandler(handleGetMe);
+const dynamic = 'force-dynamic';
 
-module.exports = { GET };
+module.exports = { GET, dynamic };
